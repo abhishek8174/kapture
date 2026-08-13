@@ -1,0 +1,92 @@
+{
+  "verify_customer": {
+    "message": {
+      "type": "tool-calls",
+      "toolCalls": [
+        {
+          "id": "call_verify_1",
+          "function": {
+            "name": "verify_customer",
+            "arguments": {
+              "account_id": "ACC-88392",
+              "verification_code": "1234"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "log_promise_to_pay": {
+    "message": {
+      "type": "tool-calls",
+      "toolCalls": [
+        {
+          "id": "call_ptp_1",
+          "function": {
+            "name": "log_promise_to_pay",
+            "arguments": {
+              "account_id": "ACC-88392",
+              "ptp_date": "2026-08-20T10:00:00Z",
+              "ptp_amount": 1250.0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "send_payment_link": {
+    "message": {
+      "type": "tool-calls",
+      "toolCalls": [
+        {
+          "id": "call_link_1",
+          "function": {
+            "name": "send_payment_link",
+            "arguments": {
+              "account_id": "ACC-88392",
+              "channel": "SMS",
+              "phone": "+14155551234"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "mark_disposition": {
+    "message": {
+      "type": "tool-calls",
+      "toolCalls": [
+        {
+          "id": "call_disp_1",
+          "function": {
+            "name": "mark_disposition",
+            "arguments": {
+              "account_id": "ACC-88392",
+              "disposition": "PROMISE_TO_PAY",
+              "timestamp": "2026-08-13T10:30:00Z",
+              "notes": "Customer confirmed PTP for 2026-08-20"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "escalate_to_agent": {
+    "message": {
+      "type": "tool-calls",
+      "toolCalls": [
+        {
+          "id": "call_escalate_1",
+          "function": {
+            "name": "escalate_to_agent",
+            "arguments": {
+              "account_id": "ACC-88392",
+              "reason": "HARDSHIP_REQUEST",
+              "context": "Customer requests hardship accommodation and payment plan review."
+            }
+          }
+        }
+      ]
+    }
+  }
+}
