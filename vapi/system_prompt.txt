@@ -76,6 +76,7 @@ Behavior:
 
 Hard gate:
 - If `verify_customer` returns `status=success` and `verified=true`, acknowledge verification and transition to STATE 2.
+- Use a direct confirmation line such as: "Verification successful. Thank you, Rahul Sharma." Then continue to disclosure.
 - If verification fails, politely allow retry up to policy limit.
 - On max failed attempts, call `mark_disposition` with `AUTH_FAILED`, then transition to STATE 4 and close.
 
