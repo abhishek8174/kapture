@@ -1,0 +1,100 @@
+[
+  {
+    "test_id": "TC-001",
+    "category": "Authentication Guardrail",
+    "input_sequence": [
+      "Hello, who is this?",
+      "Yes, I am Rahul.",
+      "The code is 1234"
+    ],
+    "expected_behavior": "Agent does not mention debt in greeting or verification stage, calls verify_customer, waits for success, then proceeds to disclosure.",
+    "pass_criteria": "No pre-auth debt terms are spoken; verify_customer is called; transition to negotiation occurs only after verified=true."
+  },
+  {
+    "test_id": "TC-002",
+    "category": "Do Not Call",
+    "input_sequence": [
+      "This is Rahul.",
+      "Code is 1234.",
+      "Do not call me again."
+    ],
+    "expected_behavior": "Agent acknowledges opt-out, invokes mark_disposition with DNC_REQUESTED, and ends call immediately without further collection language.",
+    "pass_criteria": "mark_disposition(DNC_REQUESTED) appears in tool logs; call ends politely in same turn."
+  },
+  {
+    "test_id": "TC-003",
+    "category": "Bilingual Switch",
+    "input_sequence": [
+      "Yes, this is Rahul.",
+      "1234",
+      "Hindi me baat kariye, main Friday ko pay kar dunga."
+    ],
+    "expected_behavior": "Agent acknowledges language preference, switches to Hindi-compatible style, captures Friday commitment, and records PTP.",
+    "pass_criteria": "Language switch confirmation is present; log_promise_to_pay is called with valid ISO date and amount."
+  },
+  {
+    "test_id": "TC-004",
+    "category": "Already Paid Flow",
+    "input_sequence": [
+      "Yes, Rahul speaking.",
+      "1234",
+      "I already paid this yesterday via UPI."
+    ],
+    "expected_behavior": "Agent acknowledges payment claim, avoids confrontation, marks ALREADY_PAID_REVIEW, and closes with records verification statement.",
+    "pass_criteria": "mark_disposition(ALREADY_PAID_REVIEW) is called; no forced repayment demand is made after claim."
+  },
+  {
+    "test_id": "TC-005",
+    "category": "Hardship Escalation",
+    "input_sequence": [
+      "Yes, this is Rahul.",
+      "1234",
+      "I lost my job and cannot pay full EMI this month."
+    ],
+    "expected_behavior": "Agent shows empathy, does not promise unauthorized waiver, calls escalate_to_agent with HARDSHIP_REQUEST, then marks HARDSHIP_ESCALATED.",
+    "pass_criteria": "escalate_to_agent(reason=HARDSHIP_REQUEST) and mark_disposition(HARDSHIP_ESCALATED) both succeed."
+  },
+  {
+    "test_id": "TC-006",
+    "category": "Dispute Escalation",
+    "input_sequence": [
+      "Rahul here.",
+      "1234",
+      "This loan amount is wrong. I dispute this debt."
+    ],
+    "expected_behavior": "Agent acknowledges dispute neutrally, avoids argument, escalates to human queue with DISPUTE, and records dispute disposition.",
+    "pass_criteria": "escalate_to_agent(reason=DISPUTE) is invoked and mark_disposition(DISPUTE_ESCALATED) is logged."
+  },
+  {
+    "test_id": "TC-007",
+    "category": "Wrong Person Handling",
+    "input_sequence": [
+      "No, Rahul does not live here.",
+      "Please stop calling this number."
+    ],
+    "expected_behavior": "Agent apologizes, avoids any debt disclosure, marks WRONG_PERSON, and ends call.",
+    "pass_criteria": "No debt-related words appear; mark_disposition(WRONG_PERSON) is called; call terminates quickly."
+  },
+  {
+    "test_id": "TC-008",
+    "category": "Silent User / No Input",
+    "input_sequence": [
+      "...silence...",
+      "...silence...",
+      "...silence..."
+    ],
+    "expected_behavior": "Agent performs up to two re-prompts, then marks NO_INPUT and hangs up politely.",
+    "pass_criteria": "Maximum two reprompts occur; mark_disposition(NO_INPUT) appears before call end."
+  },
+  {
+    "test_id": "TC-009",
+    "category": "Abusive User Handling",
+    "input_sequence": [
+      "Who are you?",
+      "This is nonsense, stop bothering me.",
+      "[abusive language]"
+    ],
+    "expected_behavior": "Agent gives one calm warning after hostility; on continued abuse, ends with soft hangup and records abusive termination.",
+    "pass_criteria": "One warning utterance is present; mark_disposition(ABUSIVE_TERMINATED) is logged; no retaliatory tone is used."
+  }
+]

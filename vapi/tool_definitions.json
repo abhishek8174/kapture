@@ -1,0 +1,151 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "verify_customer",
+      "description": "Verify customer identity using account ID and verification code. Must be called before debt disclosure.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Unique account identifier, for example ACC-88392."
+          },
+          "verification_code": {
+            "type": "string",
+            "description": "Customer-provided verification code, typically last 4 digits."
+          }
+        },
+        "required": ["account_id", "verification_code"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "log_promise_to_pay",
+      "description": "Record a customer promise-to-pay commitment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Unique account identifier."
+          },
+          "ptp_date": {
+            "type": "string",
+            "description": "Promise-to-pay date in ISO-8601 date format (YYYY-MM-DD)."
+          },
+          "ptp_amount": {
+            "type": "number",
+            "description": "Committed payment amount in INR."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional note captured from customer response."
+          }
+        },
+        "required": ["account_id", "ptp_date", "ptp_amount"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "send_payment_link",
+      "description": "Send a payment link to the customer over SMS or WhatsApp.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Unique account identifier."
+          },
+          "channel": {
+            "type": "string",
+            "enum": ["SMS", "WHATSAPP"],
+            "description": "Delivery channel for payment link."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Optional destination phone number in E.164 format."
+          }
+        },
+        "required": ["account_id", "channel"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "mark_disposition",
+      "description": "Record final or intermediate call disposition for reporting and compliance.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Unique account identifier."
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "PTP_COMMITTED",
+              "DNC_REQUESTED",
+              "WRONG_PERSON",
+              "NO_INPUT",
+              "ABUSIVE_TERMINATED",
+              "AUTH_FAILED",
+              "DISPUTE_ESCALATED",
+              "HARDSHIP_ESCALATED",
+              "ALREADY_PAID_REVIEW",
+              "CALL_DROPPED",
+              "TECHNICAL_FAILURE"
+            ],
+            "description": "Canonical call outcome label."
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Event timestamp in ISO-8601 date-time format."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional context note."
+          }
+        },
+        "required": ["account_id", "disposition", "timestamp"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "escalate_to_agent",
+      "description": "Escalate hardship or dispute cases to a human collections specialist.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Unique account identifier."
+          },
+          "reason": {
+            "type": "string",
+            "enum": ["HARDSHIP_REQUEST", "DISPUTE"],
+            "description": "Escalation reason code."
+          },
+          "context": {
+            "type": "string",
+            "description": "Optional additional context for handoff notes."
+          }
+        },
+        "required": ["account_id", "reason"],
+        "additionalProperties": false
+      }
+    }
+  }
+]
